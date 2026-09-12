@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flight Deck Planner</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="deck-header">
+  <div class="deck-header__id">
+    <span class="deck-header__mark">FLT</span>
+    <span class="deck-header__title">Flight Deck Planner</span>
+  </div>
+  <nav class="mode-select" role="tablist" aria-label="Planner mode">
+    <button class="mode-select__btn is-active" id="tab-plan" role="tab" aria-selected="true" aria-controls="plan-view">Plan</button>
+    <button class="mode-select__btn" id="tab-portal" role="tab" aria-selected="false" aria-controls="portal-view">Live portal</button>
+  </nav>
+</header>
+
+<main class="deck">
+
+  <!-- ===================== PLAN VIEW ===================== -->
+  <section class="view" id="plan-view" role="tabpanel" aria-labelledby="tab-plan">
+
+    <div class="panel panel--inputs">
+      <h2 class="panel__title">Route &amp; aircraft</h2>
+
+      <div class="field">
+        <label for="aircraft-select">Aircraft</label>
+        <select id="aircraft-select">
+          <option value="" disabled selected>Select aircraft</option>
+          <option value="a310-300">Airbus A310-300</option>
+          <option value="a320neo">Airbus A320neo</option>
+          <option value="a321lr">Airbus A321LR</option>
+          <option value="a330">Airbus A330</option>
+          <option value="beluga-xl">Airbus Beluga XL</option>
+          <option value="b747-8i">Boeing 747-8 Intercontinental</option>
+          <option value="b737-max">Boeing 737 MAX</option>
+          <option value="cj4">Cessna Citation CJ4</option>
+        </select>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label for="origin">Origin</label>
+          <input type="text" id="origin" placeholder="e.g. OKBK">
+        </div>
+        <div class="field">
+          <label for="destination">Destination</label>
+          <input type="text" id="destination" placeholder="e.g. OMDB">
+        </div>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label for="distance-nm">Net distance (nm)</label>
+          <input type="number" id="distance-nm" min="0" step="1" placeholder="0">
+        </div>
+        <div class="field">
+          <label for="distance-km">Net distance (km)</label>
+          <input type="number" id="distance-km" min="0" step="1" placeholder="0">
+        </div>
+      </div>
+
+      <button class="btn btn--primary" id="calculate-btn">Calculate profile</button>
+      <p class="field-note" id="plan-note">Select an aircraft and enter distance to build a profile.</p>
+    </div>
+
+    <div class="panel panel--readouts">
+      <h2 class="panel__title">Performance profile</h2>
+
+      <div class="readout-grid">
+        <div class="readout" id="readout-takeoff">
+          <span class="readout__label">Takeoff speed</span>
+          <span class="readout__value">— <span class="readout__unit">kt</span></span>
+        </div>
+        <div class="readout" id="readout-cruise-speed">
+          <span class="readout__label">Cruise speed</span>
+          <span class="readout__value">— <span class="readout__unit">kt</span></span>
+        </div>
+        <div class="readout" id="readout-cruise-alt">
+          <span class="readout__label">Cruise altitude</span>
+          <span class="readout__value">— <span class="readout__unit">ft</span></span>
+        </div>
+        <div class="readout" id="readout-descent-speed">
+          <span class="readout__label">Descent speed</span>
+          <span class="readout__value">— <span class="readout__unit">kt</span></span>
+        </div>
+        <div class="readout readout--amber" id="readout-tod">
+          <span class="readout__label">Top of descent</span>
+          <span class="readout__value">— <span class="readout__unit">nm before dest.</span></span>
+        </div>
+        <div class="readout readout--amber" id="readout-rod">
+          <span class="readout__label">Descent vertical speed</span>
+          <span class="readout__value">— <span class="readout__unit">ft/min</span></span>
+        </div>
+        <div class="readout" id="readout-approach-speed">
+          <span class="readout__label">Final approach speed (Vref)</span>
+          <span class="readout__value">— <span class="readout__unit">kt</span></span>
+        </div>
+        <div class="readout" id="readout-flight-level">
+          <span class="readout__label">Suggested flight level</span>
+          <span class="readout__value">— <span class="readout__unit">rule-based</span></span>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ===================== LIVE PORTAL VIEW ===================== -->
+  <section class="view is-hidden" id="portal-view" role="tabpanel" aria-labelledby="tab-portal" hidden>
+
+    <div class="panel panel--inputs">
+      <h2 class="panel__title">Current state</h2>
+
+      <div class="field">
+        <label for="portal-aircraft-select">Aircraft</label>
+        <select id="portal-aircraft-select">
+          <option value="" disabled selected>Select aircraft</option>
+          <option value="a310-300">Airbus A310-300</option>
+          <option value="a320neo">Airbus A320neo</option>
+          <option value="a321lr">Airbus A321LR</option>
+          <option value="a330">Airbus A330</option>
+          <option value="beluga-xl">Airbus Beluga XL</option>
+          <option value="b747-8i">Boeing 747-8 Intercontinental</option>
+          <option value="b737-max">Boeing 737 MAX</option>
+          <option value="cj4">Cessna Citation CJ4</option>
+        </select>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label for="current-speed">Current speed (kt)</label>
+          <input type="number" id="current-speed" min="0" step="1" placeholder="0">
+        </div>
+        <div class="field">
+          <label for="current-altitude">Current altitude (ft)</label>
+          <input type="number" id="current-altitude" min="0" step="1" placeholder="0">
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="distance-remaining">Distance remaining (nm)</label>
+        <input type="number" id="distance-remaining" min="0" step="1" placeholder="0">
+      </div>
+
+      <button class="btn btn--primary" id="update-btn">Update advisory</button>
+      <p class="field-note" id="portal-note">Enter your current state to get a live descent advisory.</p>
+    </div>
+
+    <div class="panel panel--readouts">
+      <h2 class="panel__title">Descent advisory</h2>
+
+      <div class="status-band" id="portal-status">
+        <span class="status-band__dot"></span>
+        <span class="status-band__text">No data yet</span>
+      </div>
+
+      <div class="deviation">
+        <span class="deviation__label deviation__label--top">Above profile</span>
+        <div class="deviation__track">
+          <div class="deviation__center-line"></div>
+          <div class="deviation__marker" id="deviation-marker"></div>
+        </div>
+        <span class="deviation__label deviation__label--bottom">Below profile</span>
+      </div>
+
+      <div class="readout-grid readout-grid--portal">
+        <div class="readout readout--amber" id="readout-target-rod">
+          <span class="readout__label">Target vertical speed</span>
+          <span class="readout__value">— <span class="readout__unit">ft/min</span></span>
+        </div>
+        <div class="readout" id="readout-target-speed">
+          <span class="readout__label">Target speed</span>
+          <span class="readout__value">— <span class="readout__unit">kt</span></span>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+</main>
+
+<footer class="deck-footer">
+  <p>Reference profiles for planning use only — not certified performance data.</p>
+</footer>
+
+<!-- Data and logic modules (added in following steps) -->
+<script src="data/aircraft.js" defer></script>
+<script src="js/calculations.js" defer></script>
+<script src="js/planner.js" defer></script>
+<script src="js/portal.js" defer></script>
+<script src="js/ui.js" defer></script>
+</body>
+</html>
